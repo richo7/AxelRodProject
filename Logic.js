@@ -1,30 +1,56 @@
-
-class Player {
-    years: number;
-
-    constructor() {
-        this.years = 0;
-    }
-
-    getInput() {
-        //return boolean 50/50
-        return 1;
-    }
-}
-
 const MAX_TURNS = 10;
+let turnsDone = 0;
 
 let player1 = new Player()
 let player2 = new Player()
 
-for (let i = 0; i < MAX_TURNS; i++) {
-	/*
-		true - betray
-		false - silence
-	*/
+class Player {
+    years: number;
+    inputted: boolean;
+    betray: boolean;
 
-    let input1 = player1.getInput();
-    let input2 = player2.getInput();
+    constructor() {
+        this.years = 0;
+    }
+}
+
+radio.onDataPacketReceived((receivedNumber) => {
+    let n = receivedNumber.receivedString;
+
+    if (n === "0" || n === "1") {
+        if(player1.inputted)
+            return;
+
+        player1.inputted = true;
+        player1.betray = n === "1";
+    } else if (n === "2" || n === "3") {
+        if (player2.inputted)
+            return;
+
+        player2.inputted = true;
+        player2.betray = n === "3";    
+    }
+
+    if(player1.inputted && player2.inputted) {
+        resolve();
+
+        //SEND DATA
+        
+        turnsDone ++;
+    }
+
+    if(turnsDone >= MAX_TURNS) {
+
+        //GAME END
+
+        reset();
+    }
+})
+radio.setGroup(1);
+
+function resolve() {
+    let input1 = player1.betray;
+    let input2 = player2.betray;
 
     if (input1 && input2) { //both betray
         player1.years += 2;
@@ -41,15 +67,10 @@ for (let i = 0; i < MAX_TURNS; i++) {
     }
 }
 
-radio.onDataPacketReceived((receivedNumber) => {
-    switch (receivedNumber) {
-        case 1:
-        case 2:
-        case 3:
-        case 4:
-    }
-})
-radio.setGroup(1);
+function reset() {
+    player1.years = 0;
+    player2.years = 0;
+}
 
 let message = "DEFAULT";
 if (player1.years == player2.years) {
