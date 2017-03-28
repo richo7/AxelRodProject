@@ -32,6 +32,9 @@ radio.onDataPacketReceived((receivedNumber) => {
     }
 
     if(player1.inputted && player2.inputted) {
+        player1.inputted = false;
+        player2.inputted = false;
+        
         resolve();
 
         //SEND DATA
