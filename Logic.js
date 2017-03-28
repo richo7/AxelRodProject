@@ -18,7 +18,7 @@ radio.onDataPacketReceived((receivedNumber) => {
     let n = receivedNumber.receivedString;
 
     if (n === "0" || n === "1") {
-        if(player1.inputted)
+        if (player1.inputted)
             return;
 
         player1.inputted = true;
@@ -28,21 +28,21 @@ radio.onDataPacketReceived((receivedNumber) => {
             return;
 
         player2.inputted = true;
-        player2.betray = n === "3";    
+        player2.betray = n === "3";
     }
 
-    if(player1.inputted && player2.inputted) {
+    if (player1.inputted && player2.inputted) {
         player1.inputted = false;
         player2.inputted = false;
-        
+
         resolve();
 
         //SEND DATA
-        
-        turnsDone ++;
+
+        turnsDone++;
     }
 
-    if(turnsDone >= MAX_TURNS) {
+    if (turnsDone >= MAX_TURNS) {
 
         //GAME END
 
@@ -74,14 +74,3 @@ function reset() {
     player1.years = 0;
     player2.years = 0;
 }
-
-let message = "DEFAULT";
-if (player1.years == player2.years) {
-    message = "It's a draw!";
-} else if (player1.years < player2.years) {
-    message = "Player 1 wins";
-} else {
-    message = "Player 2 wins";
-}
-console.log(message);
-
