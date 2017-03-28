@@ -1,0 +1,4 @@
+basic.forever(() => {
+    basic.showString("HELLO, PRISONER.")
+    basic.showString("TO PLAY, PRESS EITHER THE A BUTTON TO BE 'SILENT' OR THE B BUTTON TO 'BETRAY'.")
+})
