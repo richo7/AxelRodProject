@@ -1,6 +1,6 @@
 /* Maximum number of rounds before the game ends */
 const MAX_TURNS = 10;
-/* Rounds completed so far. Used to reset the game when required */
+/* Rounds completed so far. Used to reset the game when required. */
 let turnsDone = 0;
 
 /* The two player objects */
