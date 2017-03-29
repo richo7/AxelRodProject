@@ -1,79 +1,92 @@
-//0 = silence : 1 = betray
-//betrayed - Whether or not they have been betrayed
-let betrayed: boolean = false
+
 class Ai {
-    private aiMoves: boolean[];
-    private enemyMoves: boolean[];
-    private strategies: Strategy[];
-    private currentStratIndex: number;
+    private aiMoves: boolean[]
+    private enemyMoves: boolean[]
+    private strategies: Strategy[]
+    private currentStratIndex: number
+
 
     //this function is called to create the AI    
     constructor() {
-        this.aiMoves = [];
-        this.enemyMoves = [];
-        this.strategies = [];
-        this.currentStratIndex = 0;
-        this.strategies.push(new Strategy1(this));
+        this.aiMoves = []
+        this.enemyMoves = []
+        this.strategies = []
+
+        this.currentStratIndex = 1
+        this.strategies.push(new Strategy1(this))
+        this.strategies.push(new Strategy2(this))
     }
 
-    //receives the human player's choice    
-    receiveEnemyChoice(choice: boolean) {
-        this.enemyMoves.push(choice);
+    public getAiMoves(): boolean[] {
+        return this.aiMoves
     }
 
-    //sends a response to the other player    
-    // use the strategy     
-    respondToEnemy() {
-        let strategy: Strategy = this.strategies[this.currentStratIndex]
-        let nextMove: boolean = strategy.getNextMove()
-    }
-
-    public getMoves(): boolean[] {
-        return this.aiMoves;
-    }
-
-    public getVisibleMoves() : boolean[] {
-        let moves : boolean[] = [];
-        for(let i = 0; i < this.aiMoves.length - 1; i ++) {
-            moves.push(this.aiMoves[i]);
+    public getEnemyMoves(): boolean[] {
+        let moves: boolean[] = []
+        for (let i = 0; i < this.enemyMoves.length - 1; i++) {
+            moves.push(this.enemyMoves[i])
         }
-        return moves;
+        return moves
     }
 
-    public registerMoveSet(aiMove:boolean, enemyMove:boolean) : void {
-        this.aiMoves.push(aiMove);
-        this.enemyMoves.push(enemyMove);
+    public registerEnemyMove(enemyMove: boolean): void {
+        this.enemyMoves.push(enemyMove)
     }
+
+    public getDecision(): boolean {
+        let decision = this.strategies[this.currentStratIndex].getNextMove();
+        this.aiMoves.push(decision);
+        return decision;
+    }
+
 }
 
-abstract class Strategy {
-    protected parentAi: Ai;
+class Strategy {
+    protected parentAi: Ai
 
     constructor(ai: Ai) {
-        this.parentAi = ai;
+        this.parentAi = ai
     }
 
-    //gets next move to make. True = betray. False = silent.    
-    abstract getNextMove(): boolean;
-}
-
-//TitForTat
-class Strategy1 extends Strategy {
     getNextMove(): boolean {
-        let aiMoves = this.parentAi.getVisibleMoves();
-        return aiMoves[aiMoves.length - 1];
-    }
-}
-
-//Unforgiving
-class Strategy2 extends Strategy {
-    getNextMove(): boolean {
-        let aiMoves = this.parentAi.getVisibleMoves();
-        for (let i = 0; i < aiMoves.length; i ++) {
-            if (aiMoves[i] == false)
-                return false;
-        }
-        
         return true;
     }
 }
+
+// TitForTat
+
+class Strategy1 extends Strategy {
+    getNextMove(): boolean {
+        let aiMoves = this.parentAi.getEnemyMoves()
+        return aiMoves[aiMoves.length - 1]
+    }
+}
+
+// Unforgiving
+class Strategy2 extends Strategy {
+    getNextMove(): boolean {
+        let enemyMoves = this.parentAi.getEnemyMoves();
+        for (let i = 0; i < enemyMoves.length; i++) {
+            if (enemyMoves[i]) {
+                return true
+            }
+        }
+
+        return false
+    }
+}
+
+
+//TESTING
+
+let bob = new Ai()
+
+bob.registerEnemyMove(false)
+bob.registerEnemyMove(false)
+bob.registerEnemyMove(false)
+bob.registerEnemyMove(false)
+bob.registerEnemyMove(true)
+bob.registerEnemyMove(true)
+
+let decision = bob.getDecision();
+basic.showNumber(decision ? 1 : 0);
