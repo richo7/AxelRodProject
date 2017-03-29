@@ -31,8 +31,20 @@ class Ai {
     public getMoves(): boolean[] {
         return this.aiMoves;
     }
-}
 
+    public getVisibleMoves() : boolean[] {
+        let moves : boolean[] = [];
+        for(let i = 0; i < this.aiMoves.length - 1; i ++) {
+            moves.push(this.aiMoves[i]);
+        }
+        return moves;
+    }
+
+    public registerMoveSet(aiMove:boolean, enemyMove:boolean) : void {
+        this.aiMoves.push(aiMove);
+        this.enemyMoves.push(enemyMove);
+    }
+}
 
 abstract class Strategy {
     protected parentAi: Ai;
@@ -42,68 +54,26 @@ abstract class Strategy {
     }
 
     //gets next move to make. True = betray. False = silent.    
-    abstract getNextMove(): boolean {
-
-
-    }
+    abstract getNextMove(): boolean;
 }
 
+//TitForTat
 class Strategy1 extends Strategy {
-
     getNextMove(): boolean {
-        let aiMoves = this.parentAi.getMoves();
-        return false;
+        let aiMoves = this.parentAi.getVisibleMoves();
+        return aiMoves[aiMoves.length - 1];
     }
-
 }
 
+//Unforgiving
 class Strategy2 extends Strategy {
     getNextMove(): boolean {
-        return false;
+        let aiMoves = this.parentAi.getVisibleMoves();
+        for (let i = 0; i < aiMoves.length; i ++) {
+            if (aiMoves[i] == false)
+                return false;
+        }
+        
+        return true;
     }
 }
-
-input.onButtonPressed(Button.A, () => {
-    //give AI the user choice
-
-})
-
-input.onButtonPressed(Button.B, () => {
-//give AI the user choice})
-
-/*
-input.onButtonPressed(Button.A, () => {    
-	move[turnNumber] = 0    
-	turnNumber += 1    
-	strategy()
-})
-
-input.onButtonPressed(Button.B, () => {    
-	move[turnNumber] = 1   
-	turnNumber += 1   
-	strategy()
-})
-
-function titForTat() {    
-	if (move[turnNumber] == 0) {        
-		nextTurn = 0    
-	} else {        
-		nextTurn = 1    
-	}
-}
-
-function unforgiving() {    
-	betrayed = false    
-	for (let i = 0; i = 9; i++) {        
-		if (move[i] == 1) {            
-			betrayed = true        
-		}    
-	}    
-
-	if (betrayed == true) {        
-		nextTurn = 1    
-	} else {       
-	 nextTurn = 0    
-	}
-}
-*/
