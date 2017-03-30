@@ -41,7 +41,7 @@ input.onButtonPressed(Button.A, () => {
         radio.sendString("cS")
         verification[0] = true;
         isPlayer = true
-    } else if (state == STATE.GAME && !verification[0]) {
+    } else if (state == STATE.GAME) {
         localBetray = false
         localInput = true
         radio.sendString("cS")
@@ -71,7 +71,7 @@ function gameLoop() {
     basic.forever(() => {
 
         if (!roundInitialised) {
-            basic.showString("R" + (roundsCompleted + 1))
+            basic.showNumber((roundsCompleted + 1))
         }
 
         if (state == STATE.GAME && localInput && foreignInput) {
